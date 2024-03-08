@@ -15,7 +15,7 @@ class HomeCubit extends Cubit<HomeStates> {
       final movies = await homeService.fetchMovies();
       emit(HomeSuccess(movies));
     } catch (e) {
-      emit(HomeError("Não foi possível carregar a lista de filmes"));
+      emit(HomeError("Não foi possível carregar a lista de filmes!"));
     }
   }
 }
