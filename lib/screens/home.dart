@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:movie_tickets/components/classification.dart';
 import 'package:movie_tickets/components/home/genre_filter.dart';
 import 'package:movie_tickets/components/movie_card.dart';
 import 'package:movie_tickets/logic/cubit/home_cubit.dart';
-import 'package:movie_tickets/models/movie.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -18,6 +16,8 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    homeCubit.getMovies();
+
     super.initState();
   }
 
@@ -36,16 +36,17 @@ class _HomeState extends State<Home> {
                 ),
               ),
               const GenreFilter(),
+              // Widgets que serão atualizados
               BlocBuilder<HomeCubit, HomeStates>(
                 bloc: homeCubit,
                 builder: (context, state) {
-                  if (state == HomeLoading) {
+                  if (state is HomeLoading) {
                     return const SliverFillRemaining(
                       child: Center(
                         child: CircularProgressIndicator(),
                       ),
                     );
-                  } else if (state == HomeSuccess) {
+                  } else if (state is HomeSuccess) {
                     return SliverGrid.builder(
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
@@ -55,22 +56,31 @@ class _HomeState extends State<Home> {
                       ),
                       itemBuilder: (context, index) {
                         return MovieCard(
-                            movie: Movie(
-                                name: "James Bond",
-                                classification: Classification.naoRecomendado12,
-                                duration: "1h 22min",
-                                sinopse: "James Bond é um agente",
-                                genre: "Suspense",
-                                imageURI: null,
-                                sessions: ["18:00"]));
+                          movie: state.movies[index],
+                        );
                       },
-                      itemCount: 5,
+                      itemCount: state.movies.length,
+                    );
+                  } else if (state is HomeError) {
+                    return SliverFillRemaining(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.not_interested,
+                            size: 30,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          Text(state.error)
+                        ],
+                      ),
                     );
                   }
-                  return const SliverFillRemaining(
-                    child: Center(
-                      child: Text("Deu erro"),
-                    ),
+                  return SliverToBoxAdapter(
+                    child: Container(),
                   );
                 },
               ),
