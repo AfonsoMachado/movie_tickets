@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:movie_tickets/logic/cubit/home_cubit.dart';
 
 class GenreFilter extends StatefulWidget {
-  const GenreFilter({Key? key}) : super(key: key);
+  final HomeCubit homeCubit;
+
+  const GenreFilter({
+    Key? key,
+    required this.homeCubit,
+  }) : super(key: key);
 
   @override
   State<GenreFilter> createState() => _GenreFilterState();
@@ -39,6 +45,9 @@ class _GenreFilterState extends State<GenreFilter> {
             }).toList(),
             onChanged: (String? value) {
               if (value != null) {
+                value == "Todos"
+                    ? widget.homeCubit.getMovies()
+                    : widget.homeCubit.getMoviesByGenre(value);
                 setState(() {
                   dropdownValue = value;
                 });

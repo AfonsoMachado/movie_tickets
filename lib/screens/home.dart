@@ -17,7 +17,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     homeCubit.getMovies();
-
     super.initState();
   }
 
@@ -35,7 +34,9 @@ class _HomeState extends State<Home> {
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
               ),
-              const GenreFilter(),
+              GenreFilter(
+                homeCubit: homeCubit,
+              ),
               // Widgets que serão atualizados
               BlocBuilder<HomeCubit, HomeStates>(
                 bloc: homeCubit,
